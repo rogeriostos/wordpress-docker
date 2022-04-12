@@ -4,4 +4,14 @@
 !/docker-compose.yaml
 !/wp-install.sh
 !/app
+!/app/wp-config.php
 !/app/*/
+!/app/wp-content/*/
+!/app/wp-content/plugins/**
+!/app/wp-content/themes/**
+app/wp-content/themes/twentytwenty
+app/wp-content/themes/twentytwenty/**
+app/wp-content/themes/twentytwentyone
+app/wp-content/themes/twentytwentyone/**
+app/wp-content/themes/twentytwentytwo
+app/wp-content/themes/twentytwentytwo/**

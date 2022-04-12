@@ -1,0 +1,7 @@
+*
+!/.gitignore
+!/.env
+!/docker-compose.yaml
+!/wp-install.sh
+!/app
+!/app/*/

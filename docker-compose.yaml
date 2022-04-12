@@ -1,0 +1,83 @@
+version: '2.1'
+services:
+  wordpress:
+    image: wordpress:5.9.1-php8.1-apache
+    # image: rogeriostos/wordpress:5.9.1-php8.1-apache
+    # build:
+      # context: .
+      # dockerfile: DockerfileWP
+    # user: "33"
+    restart: always
+    ports:
+      - 80:80
+    env_file:
+      - .env
+    volumes:
+      - ./app:/var/www/html
+    networks:
+      - wp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/wp-admin/install.php"]
+      interval: 90s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  db:
+    image: mysql:5.7
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      test: 'mysqladmin ping -h localhost -u${WORDPRESS_DB_USER} -p${WORDPRESS_DB_PASSWORD}'
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    networks:
+      - wp-network
+  redis:
+    image: redis:6-alpine
+    restart: always
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: 'redis-cli ping || exit 1'
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    networks:
+      - wp-network
+  wp-cli:
+    image: wordpress:cli-2.6.0-php8.1
+    user: "33"
+    volumes:
+      - ./app:/var/www/html
+      - ./wp-install.sh:/usr/local/bin/wp-install.sh
+    env_file:
+      - ./.env
+    environment:
+      plugin:
+        redis-cache
+        wordpress-seo
+        elementor
+        #hello-devs=https://github.com/rogeriostos/hello-devs/archive/master.zip
+      theme:
+        inspiro
+    depends_on:
+      wordpress:
+        condition: service_healthy
+    entrypoint: wp-install.sh
+    networks:
+      - wp-network
+networks:
+  wp-network:
+    driver: bridge
+volumes:
+  db:

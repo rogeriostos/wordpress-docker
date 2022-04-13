@@ -39,6 +39,8 @@ wpInstallTheme()
     if [ ! -z "$themePack" ]; then
         if !  wp theme is-installed ${themeName}; then
             wp theme install ${themePack}
+        fi
+        if ! wp theme is-active ${themePack}; then
             wp theme activate ${themePack}
         fi
     fi

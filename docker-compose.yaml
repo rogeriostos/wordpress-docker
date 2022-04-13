@@ -2,12 +2,6 @@ version: '2.1'
 services:
   wordpress:
     image: wordpress:5.9.1-php8.1-apache
-    # image: rogeriostos/wordpress:5.9.1-php8.1-apache
-    # build:
-      # context: .
-      # dockerfile: DockerfileWP
-    # user: "33"
-    restart: always
     ports:
       - 80:80
     env_file:
